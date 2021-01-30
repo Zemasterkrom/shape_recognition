@@ -34,8 +34,8 @@ function tests()
         figure(1);
         top = 5; % taille du top-rank affiché
         subplot(2,top,1);
-        imshow(img); hold on;
-        plot(m(1),m(2),'+b'); % affichage du barycentre
+        imshow(img); hold on; 
+        plot(m(1),m(2),'+b'); % affichage du barycentre      
         plot(poly(:,1),poly(:,2),'v-g','MarkerSize',1,'LineWidth',1); % affichage du contour calculé
         subplot(2,top,2:top);
         plot(r); % affichage du profil de forme
@@ -50,12 +50,60 @@ function tests()
     end
 end
 
+function [x, y] = compute_line_bounds(img, pointX, pointY, theta)
+    cosX = cos(deg2rad(theta));
+    sinY = sin(deg2rad(theta));
+    
+    [height, width] = size(img);
+    
+    if (cosX > 0)
+        tempY = (width - pointX) * sinY / cosX + pointY;
+        
+        if (tempY <= height && tempY >= 0)
+            y = tempY;
+            x = width;
+        end
+    else
+        tempY = -pointX * sinY / cosX + pointY;
+        
+        if (tempY <= height && tempY >= 0)
+            y = tempY;
+            x = 0;
+        end
+    end
+    
+    if (sinY > 0)
+        tempX = (height - pointY) * cosX / sinY + pointX;
+        
+        if (tempX <= width && tempX >= 0)
+            y = height;
+            x = tempX;
+        end
+    else
+        tempX = -pointY * cosX / sinY + pointX;
+        
+        if (tempX <= width && tempX >= 0)
+            y = 0;
+            x = tempX;
+        end
+    end
+end
+
+function P = point(pOne, pTwo, length)
+    P = pOne + (pTwo - pOne) / norm(pTwo - pOne) * length;
+end
+
 function [fd,r,m,poly] = compute_fd(img)
+    % calcul du barycentre de l'image
+    [rows, cols] = size(img);
+    [x, y] = meshgrid(1:cols, 1:rows);
+    m = mean([x(logical(img)), y(logical(img))]);
+    
+    
     N = 512; % à modifier !!!
     M = 512; % à modifier !!!
     h = size(img,1);
     w = size(img,2);
-    m = [w/2 h/2]; % à modifier !!!
     t = linspace(0,2*pi,100);
     R = min(h,w)/2;
     poly = [m(1)+R*cos(t'), m(2)+R*sin(t')]; % à modifier !!!
