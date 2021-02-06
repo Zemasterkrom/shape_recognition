@@ -7,7 +7,8 @@ function [x, y] = get_intersection_lines(img, barycenter, nbLines)
     % coordonnées
     factor = round(360/nbLines);
     deg = 0 : factor : 359;
-    space = 1:4:max(size(img));
+    maxSize = max(size(img));
+    space = 1:4:maxSize;
 
     % calcul des coordonnées maximales des différentes lignes sur les
     % différents angles
@@ -17,9 +18,11 @@ function [x, y] = get_intersection_lines(img, barycenter, nbLines)
     %élimination des coordonnées "out-of-bounds"
     sX = size(x);
     sI = size(img);
+    
     for i = 1:sX(1)
         minReached = false;
         maxReached = false;
+   
         for j = 1:sX(2)
             if (x(i, j) <= 0 || y(i, j) <= 0 || minReached)
                 x(i, j) = 1;

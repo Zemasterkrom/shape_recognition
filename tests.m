@@ -50,24 +50,29 @@ function tests()
     end
 end
 
-function P = point(pOne, pTwo, length)
-    P = pOne + (pTwo - pOne) / norm(pTwo - pOne) * length;
-end
-
 function [fd,r,m,poly] = compute_fd(img)
     % calcul du barycentre de l'image
     m = barycenter(img);
     
-    % calcul des lignes d'intersection
-    N = 90; % à modifier !!!
-    M = 512; % à modifier !!!
+    % calcul des lignes d'intersection : les lignes se terminent toujours
+    % au point le plus extérieur correspondant à un pixel blanc, pour plus
+    % de précision
+    N = 90; 
     [cx, cy] = get_intersection_lines(img, m, N);
     
+    % calcul du profil de la forme : distance euclidienne des points des
+    % lignes
+    euclideanDistance = sqrt((cx(:,2) - cx(:, 1)).^2 + (cy(:, 2) - cy(:, 1)).^2);
     h = size(img,1);
     w = size(img,2);
-    t = linspace(0,2*pi,100);
-    R = 10;
-    poly = [m(1)+R*cos(t'), m(2)+R*sin(t')]; % à modifier !!!
-    r = R*ones(1,N); % à modifier !!!
+    R = min(h, w)/2;
+    r = R * euclideanDistance;
+    
+    % affichage des contours extérieurs de l'image : les contours se basent
+    % sur les lignes tracées car la matrice du polygone doit posséder le
+    % même nombre de lignes que la matrice des coordonnées des lignes
+    poly = [cx(:, 2) cy(:, 2)];
+    
+    M = 512; % à modifier !!!
     fd = rand(1,M); % à modifier !!!
 end
