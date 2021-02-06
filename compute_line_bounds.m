@@ -12,7 +12,7 @@ function [x, y] = compute_line_bounds(img, point, thetaAngles)
             sinY = sin(deg2rad(thetaAngles(n)));
 
             if (cosX > 0)
-                tempY = round((width - point(1)) * sinY / cosX + point(2));
+                tempY = ceil((width - point(1)) * sinY / cosX + point(2));
 
                 if (tempY <= height && tempY >= 0)
                     y(n) = tempY-1;

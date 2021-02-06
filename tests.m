@@ -22,6 +22,7 @@ function tests()
         % calcul du descripteur de Fourier de l'image
         img = logical(imread(img_list{im}));
         [fd,r,m,poly] = compute_fd(img);
+        
 
         % calcul et tri des scores de distance aux descripteurs de la base
         for i = 1:length(fd_db)
@@ -35,11 +36,6 @@ function tests()
         top = 5; % taille du top-rank affiché
         subplot(2,top,1);
         imshow(img); hold on; 
-        plot(m(1),m(2),'+b'); % affichage du barycentre
-
-        [cx, cy] = get_intersection_lines(img, m, 8);
-        plot(cx', cy', 'LineWidth',2)
-          
         plot(poly(:,1),poly(:,2),'v-g','MarkerSize',1,'LineWidth',1); % affichage du contour calculé
         subplot(2,top,2:top);
         plot(r); % affichage du profil de forme
@@ -58,18 +54,19 @@ function P = point(pOne, pTwo, length)
     P = pOne + (pTwo - pOne) / norm(pTwo - pOne) * length;
 end
 
-
-
-
 function [fd,r,m,poly] = compute_fd(img)
     % calcul du barycentre de l'image
     m = barycenter(img);
-    N = 512; % à modifier !!!
+    
+    % calcul des lignes d'intersection
+    N = 90; % à modifier !!!
     M = 512; % à modifier !!!
+    [cx, cy] = get_intersection_lines(img, m, N);
+    
     h = size(img,1);
     w = size(img,2);
     t = linspace(0,2*pi,100);
-    R = min(h,w)/2;
+    R = 10;
     poly = [m(1)+R*cos(t'), m(2)+R*sin(t')]; % à modifier !!!
     r = R*ones(1,N); % à modifier !!!
     fd = rand(1,M); % à modifier !!!

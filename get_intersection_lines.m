@@ -1,4 +1,7 @@
+% permet d'obtenir les coordonnées des lignes en intersection avec les
+% pixels blancs sur leur direction
 function [x, y] = get_intersection_lines(img, barycenter, nbLines)
+    
     % définition des variables : facteur de rotation de chaque ligne),
     % degrés de chaque ligne, taille de la ligne pour différentes
     % coordonnées
