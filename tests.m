@@ -22,14 +22,15 @@ function tests()
         % calcul du descripteur de Fourier de l'image
         img = logical(imread(img_list{im}));
         [fd,r,m,poly] = compute_fd(img);
-        
 
+    
         % calcul et tri des scores de distance aux descripteurs de la base
         for i = 1:length(fd_db)
             scores(i) = norm(fd-fd_db{i});
         end
         [scores, I] = sort(scores);
 
+        plot(fd);
         % affichage des résultats    
         close all;
         figure(1);
@@ -73,6 +74,6 @@ function [fd,r,m,poly] = compute_fd(img)
     % même nombre de lignes que la matrice des coordonnées des lignes
     poly = [cx(:, 2) cy(:, 2)];
     
-    M = 512; % à modifier !!!
-    fd = rand(1,M); % à modifier !!!
+    M = 90;
+    fd = abs(fftshift(fft(euclideanDistance,M, 2).^2));
 end
