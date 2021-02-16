@@ -20,18 +20,15 @@ function [x, y] = get_intersection_lines(img, barycenter, nbLines)
     sI = size(img);
     
     for i = 1:sX(1)
-        minReached = false;
-        maxReached = false;
-   
         for j = 1:sX(2)
-            if (x(i, j) <= 0 || y(i, j) <= 0 || minReached)
-                x(i, j) = 1;
-                y(i, j) = 1;
-                minReached = true;
-            elseif (x(i, j) >= sI(2) - 1 || y(i, j) >= sI(1) - 1 || maxReached)
-                x(i, j) = 1;
-                y(i, j) = 1;
-                maxReached = true;
+            if (x(i, j) <= 0 || y(i, j) <= 0)
+                x(i, j:end) = 1;
+                y(i, j:end) = 1;
+                break;
+            elseif (x(i, j) >= sI(2) - 1 || y(i, j) >= sI(1) - 1)
+                x(i, j:end) = 1;
+                y(i, j:end) = 1;
+                break;
             end
         end
     end
@@ -45,6 +42,6 @@ function [x, y] = get_intersection_lines(img, barycenter, nbLines)
     [indexes, x, y] = get_coordinates_till_last_white_pixel(img, x, y, factor, barycenter);
    
     %création des deux matrices pour l'affichage des lignes
-    x = [ones(size(deg(:)))*barycenter(1) x(indexes)];
-    y = [ones(size(deg(:)))*barycenter(2) y(indexes)];
+    x = [ones(size(indexes(:)))*barycenter(1) x(indexes)];
+    y = [ones(size(indexes(:)))*barycenter(2) y(indexes)];
 end

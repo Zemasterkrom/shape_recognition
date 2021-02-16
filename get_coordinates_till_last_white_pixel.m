@@ -15,15 +15,23 @@ function [indexes, xMatrix, yMatrix] = get_coordinates_till_last_white_pixel(img
     undefinedRows = find(indexes == 0);
 
     % si des lignes sont infinies, dans le seul ou aucun pixel blanc n'est
-    % rencontré, on retourne la coordonnée limite sur l'angle
+    % rencontré, on retourne le barycentre
     if (undefinedRows) 
         undefinedRows = [undefinedRows(:)-1 (undefinedRows - 1) * rotation];
-        [x, y] = compute_line_bounds(img, barycenter, undefinedRows(:, 2));
-        [rows, cols] = ind2sub(size(img), sub2ind(size(img), y(:)+1, x(:)+1));
-        xMatrix(undefinedRows(:, 1)+1, 1) = cols;
-        yMatrix(undefinedRows(:, 1)+1, 1) = rows;
+        xMatrix(undefinedRows(:, 1)+1, 1) = 1;
+        yMatrix(undefinedRows(:, 1)+1, 1) = 1;
         indexes(undefinedRows(:, 1)+1) = 1;
+        indexes = sub2ind(size(xMatrix), rowNumber(:), indexes(:));
+        lastUndefinedPixel = undefinedRows(end, 1)+2;
+
+        % on lie les lignes infinies au prochain point fini afin de créer
+        % une forme de contour réaliste et donc une reconnaissance plus
+        % précise
+        if (lastUndefinedPixel <= size(xMatrix, 1) && lastUndefinedPixel > 0)
+            xMatrix(undefinedRows(:, 1)+1, 1) = xMatrix(indexes(lastUndefinedPixel));
+            yMatrix(undefinedRows(:, 1)+1, 1) = yMatrix(indexes(lastUndefinedPixel));
+        end
+    else 
+        indexes = sub2ind(size(xMatrix), rowNumber(:), indexes(:));
     end
-    
-    indexes = sub2ind(size(xMatrix), rowNumber(:), indexes(:));
 end
